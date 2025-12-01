@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input, type InputRef } from 'antd';
 import IMask from 'imask';
 import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { IMaskOptions, MaskedInputProps } from './types';
+import type { IMaskOptions, MaskedInputProps, OnChangeEvent } from './types';
 
 export const MaskInput = forwardRef<InputRef, MaskedInputProps>(function MaskedInput(props, forwardedRef) {
   const {
@@ -16,7 +15,7 @@ export const MaskInput = forwardRef<InputRef, MaskedInputProps>(function MaskedI
   } = props;
 
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const maskRef = useRef<IMask.InputMask<any> | null>(null);
+  const maskRef = useRef<IMask.InputMask<IMask.AnyMasked | IMask.AnyMaskedOptions> | null>(null);
 
   const initialValue = (typeof controlledValue === 'string' ? controlledValue : defaultValue) || '';
   const [value, setValue] = useState(initialValue);
@@ -32,18 +31,18 @@ export const MaskInput = forwardRef<InputRef, MaskedInputProps>(function MaskedI
       },
       ..._maskOptions,
     } as IMaskOptions;
-  }, [mask, _maskOptions, definitions]);
+  }, [mask, _maskOptions, definitions]) as IMask.AnyMaskedOptions;
 
   const initMask = useCallback(() => {
     const el = inputRef.current;
     if (!el) return;
 
     if (maskRef.current) {
-      maskRef.current.updateOptions(maskOptions as any);
+      maskRef.current.updateOptions(maskOptions);
       return;
     }
 
-    const maskInstance = IMask(el, maskOptions as any);
+    const maskInstance = IMask(el, maskOptions);
     maskRef.current = maskInstance;
 
     maskInstance.on('accept', () => {
@@ -55,8 +54,8 @@ export const MaskInput = forwardRef<InputRef, MaskedInputProps>(function MaskedI
         target: el,
         maskedValue: masked,
         unmaskedValue: unmasked,
-      };
-      onChange?.(syntheticEvent as any);
+      } as OnChangeEvent;
+      onChange?.(syntheticEvent);
     });
 
     if (initialValue) {
@@ -83,7 +82,7 @@ export const MaskInput = forwardRef<InputRef, MaskedInputProps>(function MaskedI
     }
   }, [controlledValue]);
 
-  const handleRef = (ref: any) => {
+  const handleRef = (ref: InputRef) => {
     if (forwardedRef) {
       if (typeof forwardedRef === 'function') forwardedRef(ref);
       else forwardedRef.current = ref;
