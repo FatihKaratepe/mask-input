@@ -44,13 +44,16 @@ function App() {
         </Col>
         <Col span={24}>
           <Card title="Phone Number">
-            <Row gutter={12}>
+            <Row gutter={[12, 12]}>
               <Col span={6}>
                 <Select
                   style={{ width: '100%' }}
                   showSearch
                   options={countries}
-                  onChange={setSelectedCountry}
+                  onChange={(val) => {
+                    setSelectedCountry(val);
+                    setValue('');
+                  }}
                   value={selectedCountry}
                 />
               </Col>
@@ -65,9 +68,6 @@ function App() {
                         : phoneCodes[selectedCountry]
                       : 'US'
                   }
-                  definitions={{
-                    '#': /[0-9]/,
-                  }}
                   placeholder="Enter phone number"
                 />
               </Col>
@@ -76,7 +76,16 @@ function App() {
         </Col>
         <Col span={24}>
           <Card title="Only Number">
-            <MaskInput mask={Number} placeholder="You can enter only numbers" />
+            <Row gutter={[15, 15]}>
+              <Col span={24}>
+                <h3>Only Number</h3>
+                <MaskInput mask={Number} placeholder="You can enter only numbers" />
+              </Col>
+              <Col span={24}>
+                <h3>Only Number (max: 35)</h3>
+                <MaskInput mask={Number} maskOptions={{ max: 35 } as never} placeholder="You can enter only numbers" />
+              </Col>
+            </Row>
           </Card>
         </Col>
         <Col span={24}>

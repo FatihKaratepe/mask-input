@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import type { InputProps } from 'antd';
 import IMask from 'imask';
 
-export type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (x: infer R) => any
+export type UnionToIntersection<T> = (T extends unknown ? (x: T) => unknown : never) extends (x: infer R) => unknown
   ? {
       [K in keyof R]: R[K];
     }
@@ -22,7 +20,7 @@ export type InputMaskOptions = {
   [K in keyof IMaskOptionsBase]?: IMaskOptionsBase[K];
 };
 
-type MaskFieldType = string | RegExp | Function | Date | InputMaskOptions;
+type MaskFieldType = string | RegExp | ((...args: never) => unknown) | Date | InputMaskOptions;
 
 export interface IMaskOptions extends Omit<InputMaskOptions, 'mask'> {
   mask: MaskFieldType;
@@ -38,5 +36,5 @@ export interface MaskedInputProps extends Omit<InputProps, 'onChange' | 'value' 
   value?: string;
   defaultValue?: string;
   maskOptions?: InputMaskOptions;
-  onChange?: (event: OnChangeEvent) => any;
+  onChange?: (event: OnChangeEvent) => void;
 }
